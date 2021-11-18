@@ -37,6 +37,8 @@ struct Doctor
 	int isReferral;
 	app reservedApp[10];
 	app AppointmentsSecheualed[10];
+	float rating;
+	int numOfRaters;
 
 }typedef doc;
 
@@ -176,7 +178,9 @@ void signInDoctor(doc* dArr, int *dArrSize)
 	.speciality = speciality,
 	.title = title,
 	.AppointmentsSecheualed = NULL,
-	.reservedApp = NULL
+	.reservedApp = NULL,
+	.rating = 0,
+	.numOfRaters = 0
 	};
 	dArr[*dArrSize] = newD;
 	(*dArrSize)++;
