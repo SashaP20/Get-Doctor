@@ -4,6 +4,7 @@
 #include<string.h>
 #include<conio.h>
 
+
 struct Appointment
 {
 	int day;
@@ -53,7 +54,7 @@ doc IDForPasswordCheck(doc* dArr, long idCheck, int dArrSize)
 }
 int IDLenCheck(long ID)
 {
-	if (ID >= 100000000 || ID <= 999999999)
+	if (ID >= 100000000 && ID <= 999999999)
 	{
 		return 1;
 	}
@@ -95,7 +96,7 @@ int PasswordCheck(char* password)
 }
 
 
-void signInDoctor(doc* dArr, int dArrSize)
+void signInDoctor(doc* dArr, int *dArrSize)
 {
 	printf("Enter a name: \n");
 	char name[20];
@@ -103,27 +104,36 @@ void signInDoctor(doc* dArr, int dArrSize)
 	printf("Enter a phone number: \n");
 	char phone[11];
 	scanf("%s", &phone);
-	char gender;
+
+	char gender ='M';
 	printf("Enter a gender: M or F \n");
 	do
 	{
+		getchar();
+
 		scanf("%c", &gender);
-		if (gender != 'M' || gender != 'F')
+
+		if (gender != 'M' && gender != 'F' && gender != 'm' && gender != 'f')
 		{
 			printf("Error wrong gender entered, try again.\n");
 		}
-	} while (gender != 'M' || gender != 'F');
+
+	} while (gender != 'M' && gender != 'F' && gender != 'm' && gender != 'f');
 	printf("Enter a speciality: \n");
 	char speciality[20];
-	scanf("%s", &speciality);
+	getchar();
+	fgets(speciality, 20, stdin);
 	printf("Enter a title: \n");
+
 	char title[20];
 	fgets(title, 20, stdin);
+
 	int price = 0;
 	printf("Enter a price: \n");
 	do
 	{
 		scanf("%d", &price);
+
 		if (price < 0)
 		{
 			printf("Invalid price, try again \n");
@@ -134,22 +144,25 @@ void signInDoctor(doc* dArr, int dArrSize)
 	do
 	{
 		scanf("%d", &referral);
-		if (referral != 1 || referral != 0)
+
+		if (referral != 1 && referral != 0)
 		{
-			printf("Invalid choise, try again \n");
+			printf("Invalid choice, try again \n");
 		}
-	} while (referral != 1 || referral != 0);
+	} while (referral != 1 && referral != 0);
 	long ID;
 	printf("Enter an ID: \n");
 	do
 	{
 		scanf("%ld", &ID);
+
 	} while (IDValidDoctor(ID, dArr,dArrSize)==0);
 	char password[20];
 	printf("Enter a password:\n");
 	do
 	{
 		scanf("%s", &password);
+
 	} while (PasswordCheck(password)==0);
 	doc newD =
 	{
@@ -165,6 +178,13 @@ void signInDoctor(doc* dArr, int dArrSize)
 	.AppointmentsSecheualed = NULL,
 	.reservedApp = NULL
 	};
+	dArr[*dArrSize] = newD;
+	(*dArrSize)++;
+	for (int i = 0; i < *dArrSize; i++)
+	{
+		printf("inside %c", dArr[i].gender);
+	}
+
 	
 }
 
@@ -224,7 +244,6 @@ int main()
 	//strcpy(d3.speciality, "Dermatologist");
 
 	doc dArr[10];
-	static int dArrSize = 0;
 	//dArr[0] = d1;
 	//dArr[1] = d2;
 	//dArr[2] = d3;
@@ -235,7 +254,12 @@ int main()
 	//pArr[1] = p2;
 	//pArr[2] = p3;
 	//int pArrSize = 3;
-	signInDoctor(dArr, dArrSize);
+	int dArrSize = 0;
+	signInDoctor(dArr, &dArrSize);
+	for (int i = 0; i < dArrSize; i++)
+	{
+		printf("outside %c", dArr[i].gender);
+	}
 
 	/*printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
 	int option;
