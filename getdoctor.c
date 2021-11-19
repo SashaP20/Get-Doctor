@@ -3,15 +3,23 @@
 #include<stdlib.h>
 #include<string.h>
 #include<conio.h>
+#include<time.h>
+
+
+
+struct Date
+{
+	int day;
+	int month;
+	int hour;
+	int minute;
+}typedef date;
 
 
 struct Appointment
 {
-	int day;
-	int month;
-	char hour[6];
-	struct p* patients;
 	int type;
+	date date;
 }typedef app;
 
 struct Patient
@@ -20,7 +28,9 @@ struct Patient
 	char name[20];
 	char phone[11];
 	char password[10];
-	app appointments[10]; 
+	app appointments[10];
+	date passwordDate;
+
 
 }typedef pat;
 
@@ -39,21 +49,92 @@ struct Doctor
 	app AppointmentsSecheualed[10];
 	float rating;
 	int numOfRaters;
+	date passwordDate;
 
 }typedef doc;
 
-//doc IDForPasswordCheck(doc* dArr, long idCheck, int dArrSize)
-//{
-//	for (int i = 0; i < dArrSize; i++)
-//	{
-//		if (dArr[i].id == idCheck)
-//		{
-//			return dArr[i];
-//		}
-//	}
-//	printf("Inavalid ID.\n");
-//
-//}
+int DIDForPasswordCheck(doc* dArr, long idCheck, int dArrSize) // getting ID and check if the ID  exists in the array, return index.
+{
+	for (int i = 0; i < dArrSize; i++)
+	{
+		if (dArr[i].id == idCheck)
+		{
+			return i;
+		}
+	}
+	printf("ID does not exist\n");
+	return -1;
+
+}
+
+int PasswordCompareDoc(doc* dArr, long idCheck, int dArrSize) // Compare password with id
+{
+	int index = DIDForPasswordCheck(dArr, idCheck, dArrSize);
+	if (index == -1)
+		return -1;
+	char password[20];
+	printf("Enter a password:\n");
+	scanf("%s", &password);
+	if (strcmp(password, dArr[index].password) == 0)
+	{
+		time_t today = time(NULL);
+		struct tm* today2 = localtime(&today);
+		if (abs(dArr[index].passwordDate.month - ((today2->tm_mon) + 1)) >= 3)
+		{
+			printf("The password need to be changed,  3 months passed \n");
+			strcpy(dArr[index].password, NewPassword(dArr[index].password, index));
+		}
+		return index;
+	}
+		
+	else 
+	{
+
+		printf("Invalid password\n");
+		return -1;
+	}
+}
+
+int PIDForPasswordCheck(pat* pArr, long idCheck, int pArrSize) // getting ID and check if the ID  exists in the array, return index.
+{
+	for (int i = 0; i < pArrSize; i++)
+	{
+		if (pArr[i].id == idCheck)
+		{
+			return i;
+		}
+	}
+	printf("ID does not exist\n");
+	return -1;
+
+}
+
+int PasswordComparePat(pat* pArr, long idCheck, int pArrSize)
+{
+	int index = PIDForPasswordCheck(pArr, idCheck, pArrSize);
+	if (index == -1)
+		return -1;
+	char password[20];
+	printf("Enter a password:\n");
+	scanf("%s", &password);
+	if (strcmp(password, pArr[index].password) == 0)
+	{
+		time_t today = time(NULL);
+		struct tm* today2 = localtime(&today);
+		if (abs(pArr[index].passwordDate.month - ((today2->tm_mon) + 1)) >= 3)
+		{
+			printf("The password need to be changed,  3 months passed \n");
+			strcpy(pArr[index].password, NewPassword(pArr[index].password, index));
+			
+		}
+		return index;
+	}
+	else
+		printf("Invalid password\n");
+	return -1;
+
+}
+
 int IDLenCheck(long ID)
 {
 	if (ID >= 100000000 && ID <= 999999999)
@@ -65,13 +146,13 @@ int IDLenCheck(long ID)
 		return 0;
 	}
 }
-int IDValidDoctor(long ID,doc* dArr, int dArrSize)
+int IDValidDoctor(long ID, doc* dArr, int dArrSize)
 {
-	if(IDLenCheck(ID) == 1) //ID is 9 digits
+	if (IDLenCheck(ID) == 1) //ID is 9 digits
 	{
 		for (int i = 0; i < dArrSize; i++)
 		{
-			if(ID == dArr->id) // ID already exists
+			if (ID == dArr->id) // ID already exists
 			{
 				printf("Error, ID already exists.\n");
 				return 0;
@@ -88,7 +169,7 @@ int IDValidDoctor(long ID,doc* dArr, int dArrSize)
 
 int PasswordCheck(char* password)
 {
-	for (int i = 0; i < strlen(password); i++) 
+	for (int i = 0; i < strlen(password); i++)
 	{
 		if (password[i] >= 'A' && password[i] <= 'Z')
 			return 1;
@@ -98,7 +179,7 @@ int PasswordCheck(char* password)
 }
 
 
-void signInDoctor(doc* dArr, int *dArrSize)
+void signInDoctor(doc* dArr, int* dArrSize)
 {
 	printf("Enter a name: \n");
 	char name[20];
@@ -107,7 +188,7 @@ void signInDoctor(doc* dArr, int *dArrSize)
 	char phone[11];
 	scanf("%s", &phone);
 
-	char gender ='M';
+	char gender = 'M';
 	printf("Enter a gender: M or F \n");
 	do
 	{
@@ -158,30 +239,35 @@ void signInDoctor(doc* dArr, int *dArrSize)
 	{
 		scanf("%ld", &ID);
 
-	} while (IDValidDoctor(ID, dArr,dArrSize)==0);
+	} while (IDValidDoctor(ID, dArr, dArrSize) == 0);
 	char password[20];
 	printf("Enter a password:\n");
 	do
 	{
 		scanf("%s", &password);
 
-	} while (PasswordCheck(password)==0);
+	} while (PasswordCheck(password) == 0);
 	doc newD;
-		newD.gender = gender;
-		newD.id = ID;
-		newD.isReferral = referral;
-		strcpy(newD.name, name);
-		strcpy(newD.password , password);
-		strcpy(newD.phone , phone);
-		newD.price = price;
-		strcpy(newD.speciality , speciality);
-		strcpy(newD.title , title);
-		newD.rating = 0;
-		newD.numOfRaters = 0;
-	
+	newD.gender = gender;
+	newD.id = ID;
+	newD.isReferral = referral;
+	strcpy(newD.name, name);
+	strcpy(newD.password, password);
+	strcpy(newD.phone, phone);
+	newD.price = price;
+	strcpy(newD.speciality, speciality);
+	strcpy(newD.title, title);
+	newD.rating = 0;
+	newD.numOfRaters = 0;
+	time_t today = time(NULL);
+	struct tm* today2 = localtime(&today);
+	newD.passwordDate.day = (today2->tm_mday) + 1;
+	newD.passwordDate.month = (today2->tm_mon)+1;
+	newD.passwordDate.hour = (today2->tm_hour) + 1;
+	newD.passwordDate.minute = (today2->tm_min) + 1;
+
 	dArr[*dArrSize] = newD;
 	(*dArrSize)++;
-	printf("inside %s\n", dArr[*dArrSize-1].name);
 }
 int IDValidPatient(long ID, pat* pArr, int pArrSize)
 {
@@ -203,7 +289,7 @@ int IDValidPatient(long ID, pat* pArr, int pArrSize)
 		return 0;
 	}
 }
-void signInPatient(pat* pArr,int *pArrSize)
+void signInPatient(pat* pArr, int* pArrSize)
 {
 	printf("Enter a name: \n");
 	char name[20];
@@ -227,15 +313,37 @@ void signInPatient(pat* pArr,int *pArrSize)
 	} while (PasswordCheck(password) == 0);
 	pat newP;
 
-		
+
 	newP.id = ID;
-	strcpy(newP.name , name);
-	strcpy(newP.password , password);
-	strcpy(newP.phone , phone);
-	
+	strcpy(newP.name, name);
+	strcpy(newP.password, password);
+	strcpy(newP.phone, phone);
+	time_t today = time(NULL);
+	struct tm* today2 = localtime(&today);
+	newP.passwordDate.day = (today2->tm_mday) + 1;
+	newP.passwordDate.month = (today2->tm_mon) + 1;
+	newP.passwordDate.hour = (today2->tm_hour) + 1;
+	newP.passwordDate.minute = (today2->tm_min) + 1;
+
 	pArr[*pArrSize] = newP;
 	(*pArrSize)++;
 }
+
+char* NewPassword(char* password, int index) // new password after 3 months
+{
+	char NewPassword[20];
+	printf("Enter a new password:\n");
+	do
+	{
+		scanf("%s", &NewPassword);
+
+	} while (PasswordCheck(NewPassword) == 0);
+	strcpy(password, NewPassword);
+	return NewPassword;
+}
+
+
+
 
 int main()
 {
@@ -304,31 +412,35 @@ int main()
 	//pArr[2] = p3;
 	//int pArrSize = 3;
 	int dArrSize = 0;
-	signInPatient(pArr, &pArrSize);
-	for (int i = 0; i < pArrSize; i++)
-	{
-		printf("outside %s", pArr[i].name);
-	}
-
-	/*printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
-	int option;
-	scanf("%d", &option);
-	switch (option)
-	{
-	case 1:
-		printf("Pick an option: \n 1-Sign in. \n 2-Log in.\n");
-		scanf("%d", &option);
-		switch (option)
-		{
-		case 1:
-			signInDoctor(dArr,dArrSize);
-
-		default:
-			break;
-		}
-	default:
-		break;
-	}*/
+	/*signInPatient(pArr, &pArrSize);*/
+	/*time_t moshe = time(NULL);
+	printf("%dl \n", moshe);
+	struct tm* moshe2 = localtime(&moshe);
+	printf("%d \n", (moshe2->tm_mon)+1);*/
 	
+	//for (int i = 0; i < pArrSize; i++)
+	//{
+	//	printf("outside %s", pArr[i].name);
+	//}
+
+	//printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
+	//int option;
+	//scanf("%d", &option);
+	//switch (option)
+	//{
+	//case 1:
+	//	printf("Pick an option: \n 1-Sign in. \n 2-Log in.\n");
+	//	scanf("%d", &option);
+	//	switch (option)
+	//	{
+	//	case 1:
+	//		signInDoctor(dArr,dArrSize);
+	//	default:
+	//		break;
+	//	}
+	//default:
+	//	break;
+	//}
+
 
 }
