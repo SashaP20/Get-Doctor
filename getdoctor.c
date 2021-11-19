@@ -20,7 +20,7 @@ struct Patient
 	char name[20];
 	char phone[11];
 	char password[10];
-	app appointment1[10];
+	app appointments[10]; 
 
 }typedef pat;
 
@@ -42,18 +42,18 @@ struct Doctor
 
 }typedef doc;
 
-doc IDForPasswordCheck(doc* dArr, long idCheck, int dArrSize)
-{
-	for (int i = 0; i < dArrSize; i++)
-	{
-		if (dArr[i].id == idCheck)
-		{
-			return dArr[i];
-		}
-	}
-	printf("Inavalid ID.\n");
-
-}
+//doc IDForPasswordCheck(doc* dArr, long idCheck, int dArrSize)
+//{
+//	for (int i = 0; i < dArrSize; i++)
+//	{
+//		if (dArr[i].id == idCheck)
+//		{
+//			return dArr[i];
+//		}
+//	}
+//	printf("Inavalid ID.\n");
+//
+//}
 int IDLenCheck(long ID)
 {
 	if (ID >= 100000000 && ID <= 999999999)
@@ -166,30 +166,75 @@ void signInDoctor(doc* dArr, int *dArrSize)
 		scanf("%s", &password);
 
 	} while (PasswordCheck(password)==0);
-	doc newD =
-	{
-	.gender = gender,
-	.id = ID,
-	.isReferral = referral,
-	.name = name,
-	.password = password,
-	.phone = phone,
-	.price = price,
-	.speciality = speciality,
-	.title = title,
-	.AppointmentsSecheualed = NULL,
-	.reservedApp = NULL,
-	.rating = 0,
-	.numOfRaters = 0
-	};
+	doc newD;
+		newD.gender = gender;
+		newD.id = ID;
+		newD.isReferral = referral;
+		strcpy(newD.name, name);
+		strcpy(newD.password , password);
+		strcpy(newD.phone , phone);
+		newD.price = price;
+		strcpy(newD.speciality , speciality);
+		strcpy(newD.title , title);
+		newD.rating = 0;
+		newD.numOfRaters = 0;
+	
 	dArr[*dArrSize] = newD;
 	(*dArrSize)++;
-	for (int i = 0; i < *dArrSize; i++)
+	printf("inside %s\n", dArr[*dArrSize-1].name);
+}
+int IDValidPatient(long ID, pat* pArr, int pArrSize)
+{
+	if (IDLenCheck(ID) == 1) //ID is 9 digits
 	{
-		printf("inside %c", dArr[i].gender);
+		for (int i = 0; i < pArrSize; i++)
+		{
+			if (ID == pArr->id) // ID already exists
+			{
+				printf("Error, ID already exists.\n");
+				return 0;
+			}
+		}
+		return 1; //ID is 9 digits and it doesn't already exist.
 	}
+	else //ID is not 9 digits.
+	{
+		printf("Error, ID isn't 9 digits long.\n");
+		return 0;
+	}
+}
+void signInPatient(pat* pArr,int *pArrSize)
+{
+	printf("Enter a name: \n");
+	char name[20];
+	scanf("%s", &name);
+	printf("Enter a phone number: \n");
+	char phone[11];
+	scanf("%s", &phone);
+	long ID;
+	printf("Enter an ID: \n");
+	do
+	{
+		scanf("%ld", &ID);
 
+	} while (IDValidPatient(ID, pArr, pArrSize) == 0);
+	char password[20];
+	printf("Enter a password:\n");
+	do
+	{
+		scanf("%s", &password);
+
+	} while (PasswordCheck(password) == 0);
+	pat newP;
+
+		
+	newP.id = ID;
+	strcpy(newP.name , name);
+	strcpy(newP.password , password);
+	strcpy(newP.phone , phone);
 	
+	pArr[*pArrSize] = newP;
+	(*pArrSize)++;
 }
 
 int main()
@@ -253,16 +298,16 @@ int main()
 	//dArr[2] = d3;
 
 	pat pArr[10];
-	static int pArrSize = 0;
+	int pArrSize = 0;
 	//pArr[0] = p1;
 	//pArr[1] = p2;
 	//pArr[2] = p3;
 	//int pArrSize = 3;
 	int dArrSize = 0;
-	signInDoctor(dArr, &dArrSize);
-	for (int i = 0; i < dArrSize; i++)
+	signInPatient(pArr, &pArrSize);
+	for (int i = 0; i < pArrSize; i++)
 	{
-		printf("outside %c", dArr[i].gender);
+		printf("outside %s", pArr[i].name);
 	}
 
 	/*printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
