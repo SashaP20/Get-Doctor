@@ -7,12 +7,16 @@
 
 
 
+
+
+
 struct Date
 {
-	int day;
 	int month;
+	int day;
 	int hour;
 	int minute;
+
 }typedef date;
 
 
@@ -20,6 +24,7 @@ struct Appointment
 {
 	int type;
 	date date;
+
 }typedef app;
 
 struct Patient
@@ -47,11 +52,34 @@ struct Doctor
 	int isReferral;
 	app reservedApp[10];
 	app AppointmentsSecheualed[10];
+	date availableDates[10];
 	float rating;
 	int numOfRaters;
 	date passwordDate;
 
 }typedef doc;
+
+struct Month
+{
+	char month[20];
+	date date[10];
+} typedef month;
+
+
+
+char* NewPassword(char* password, int index);
+int DIDForPasswordCheck(doc* dArr, long idCheck, int dArrSize);
+int PasswordCompareDoc(doc* dArr, long idCheck, int dArrSize);
+int PIDForPasswordCheck(pat* pArr, long idCheck, int pArrSize);
+int PasswordComparePat(pat* pArr, long idCheck, int pArrSize);
+int IDLenCheck(long ID);
+int IDValidDoctor(long ID, doc* dArr, int dArrSize);
+void signInDoctor(doc* dArr, int* dArrSize);
+int PasswordCheck(char* password);
+int IDValidPatient(long ID, pat* pArr, int pArrSize);
+void signInPatient(pat* pArr, int* pArrSize);
+app appointmentSchedualing(doc* dArr, int dArrSize);
+
 
 int DIDForPasswordCheck(doc* dArr, long idCheck, int dArrSize) // getting ID and check if the ID  exists in the array, return index.
 {
@@ -86,8 +114,8 @@ int PasswordCompareDoc(doc* dArr, long idCheck, int dArrSize) // Compare passwor
 		}
 		return index;
 	}
-		
-	else 
+
+	else
 	{
 
 		printf("Invalid password\n");
@@ -124,8 +152,8 @@ int PasswordComparePat(pat* pArr, long idCheck, int pArrSize)
 		if (abs(pArr[index].passwordDate.month - ((today2->tm_mon) + 1)) >= 3)
 		{
 			printf("The password need to be changed,  3 months passed \n");
-			strcpy(pArr[index].password, NewPassword(pArr[index].password, index));
-			
+			strcpy(pArr[index].password, (char*)NewPassword(pArr[index].password, index));
+
 		}
 		return index;
 	}
@@ -262,7 +290,7 @@ void signInDoctor(doc* dArr, int* dArrSize)
 	time_t today = time(NULL);
 	struct tm* today2 = localtime(&today);
 	newD.passwordDate.day = (today2->tm_mday) + 1;
-	newD.passwordDate.month = (today2->tm_mon)+1;
+	newD.passwordDate.month = (today2->tm_mon) + 1;
 	newD.passwordDate.hour = (today2->tm_hour) + 1;
 	newD.passwordDate.minute = (today2->tm_min) + 1;
 
@@ -342,86 +370,53 @@ char* NewPassword(char* password, int index) // new password after 3 months
 	return NewPassword;
 }
 
-
+app appointmentSchedualing(doc* dArr, int dArrSize)
+{
+	char speciality[5][20];
+	strcpy(speciality[0], "Family doctor");
+	strcpy(speciality[1], "Psychiatrist");
+	strcpy(speciality[2], "Gynecologist");
+	strcpy(speciality[3], "Cardiologist");
+	printf("Please choose what speciality of the doctor you want: \n");
+	for (int i = 0; i < 4; i++)
+	{
+		printf("%d. %s \n", i + 1, speciality[i]);
+	}
+	int index = -1;
+	scanf("%d", &index);
+	printf("Please choose a doctor: \n");
+	int j = 0;
+	int place [20];
+	for (int i = 0; i < dArrSize; i++)
+	{
+		if (strcmp(dArr[i].speciality, speciality[index])==0)
+		{
+			
+			place[j] = i;
+			printf("%d. %s \n", j+1, dArr[i].name);
+			j++;
+		}
+	}
+	scanf("%d", &index);
+	index--;
+	printf("Please choose a month: \n 1. January \n 2. February \n 3. March \n 4. April \n 5. May \n 6. June \n 7. July\n 8. August\n 9. September\n 10. October\n 11. November\n 12. December\n");
+	int month;
+	scanf("%d", &month);
+	
+}
 
 
 int main()
 {
-	//pat p1, p2, p3;
-	//// patient 1 information
-	//strcpy(p1.name, "Alex");
-	//p1.id = 321223075;
-	//strcpy(p1.password, "A123456");
-	//strcpy(p1.phone, "0545542719");
-
-	////patient 2 information
-	//strcpy(p2.name, "Bar");
-	//p2.id = 123456789;
-	//strcpy(p2.password, "B123456");
-	//strcpy(p2.phone, "0557483593");
-
-
-	////patient 3 information
-	//strcpy(p3.name, "Shira");
-	//p3.id = 123456789;
-	//strcpy(p3.password, "C123456");
-	//strcpy(p3.phone, "0325236324");
-
-	//doc d1, d2, d3;
-
-	////doctor 1 information
-	/*strcpy(d1.name, "Neta");
-	d1.gender = 'F';
-	d1.id = 123456789;
-	d1.isReferral = 1;
-	strcpy(d1.password, "D123456");
-	strcpy(d1.phone, "0542245135");
-	d1.price = 100;
-	strcpy(d1.speciality, "Eye");*/
-
-	////doctor 2 information
-	//strcpy(d2.name, "David");
-	//d2.gender = 'M';
-	//d2.id = 123456789;
-	//d2.isReferral = 0;
-	//strcpy(d2.password, "E123456");
-	//strcpy(d2.phone, "0501244545");
-	//d2.price = 75;
-	//strcpy(d2.speciality, "Family");
-
-
-	////doctor 3 information
-	//strcpy(d3.name, "Vlad");
-	//d3.gender = 'M';
-	//d3.id = 123456789;
-	//d3.isReferral = 1;
-	//strcpy(d3.password, "F123456");
-	//strcpy(d3.phone, "0521235693");
-	//d3.price = 50;
-	//strcpy(d3.speciality, "Dermatologist");
-
+	
 	doc dArr[10];
-	//dArr[0] = d1;
-	//dArr[1] = d2;
-	//dArr[2] = d3;
+	
 
 	pat pArr[10];
 	int pArrSize = 0;
-	//pArr[0] = p1;
-	//pArr[1] = p2;
-	//pArr[2] = p3;
-	//int pArrSize = 3;
-	int dArrSize = 0;
-	/*signInPatient(pArr, &pArrSize);*/
-	/*time_t moshe = time(NULL);
-	printf("%dl \n", moshe);
-	struct tm* moshe2 = localtime(&moshe);
-	printf("%d \n", (moshe2->tm_mon)+1);*/
 	
-	//for (int i = 0; i < pArrSize; i++)
-	//{
-	//	printf("outside %s", pArr[i].name);
-	//}
+	int dArrSize = 0;
+	
 
 	//printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
 	//int option;
@@ -441,6 +436,4 @@ int main()
 	//default:
 	//	break;
 	//}
-
-
-}
+	
