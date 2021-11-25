@@ -6,10 +6,6 @@
 #include<time.h>
 
 
-
-
-
-
 struct Date
 {
 	int month;
@@ -23,13 +19,15 @@ struct Date
 
 struct WorkMonth
 {
-	Date WorkDay[20][5];
-};
+	date WorkDay[20][5];
+
+}typedef WorkMonth;
 
 struct Appointment
 {
 	char type;
 	date date;
+	char DoctorName[20];
 
 }typedef app;
 
@@ -40,6 +38,7 @@ struct Patient
 	char phone[11];
 	char password[10];
 	app appointments[10];
+	int numOfAppointments;
 	date passwordDate;
 
 
@@ -56,8 +55,8 @@ struct Doctor
 	char title[20];
 	int price;
 	int isReferral;
-	app reservedApp[10];
-	app AppointmentsSecheualed[10];
+	app AppointmentsSchedualed[10];
+	int numbOfAppointmentSchedualed;
 	WorkMonth* WorkMonth;
 	float rating;
 	int numOfRaters;
@@ -296,6 +295,7 @@ void signInDoctor(doc* dArr, int* dArrSize)
 	newD.passwordDate.hour = (today2->tm_hour) + 1;
 	newD.passwordDate.minute = (today2->tm_min) + 1;
 	newD.WorkMonth = SchedualInit();
+	newD.numbOfAppointmentSchedualed = 0;
 
 
 	dArr[*dArrSize] = newD;
@@ -356,6 +356,7 @@ void signInPatient(pat* pArr, int* pArrSize)
 	newP.passwordDate.month = (today2->tm_mon) + 1;
 	newP.passwordDate.hour = (today2->tm_hour) + 1;
 	newP.passwordDate.minute = (today2->tm_min) + 1;
+	newP.numOfAppointments = 0;
 
 	pArr[*pArrSize] = newP;
 	(*pArrSize)++;
@@ -374,82 +375,82 @@ char* NewPassword(char* password, int index) // new password after 3 months
 	return NewPassword;
 }
 
-//app appointmentSchedualing(doc* dArr, int dArrSize)
-//{
-//	char* speciality = specialityInit();
-//	printf("Please choose a doctor: \n");
-//	int j = 0;
-//	int place[20] = { 0 };
-//	for (int i = 0; i < dArrSize; i++)
-//	{
-//		if (strcmp(dArr[i].speciality, speciality) == 0)
-//		{
-//
-//			place[j] = i;
-//			printf("%d. %s \n", j + 1, dArr[i].name);
-//			j++;
-//		}
-//	}
-//	int index;
-//
-//	scanf("%d", &index);
-//	int month;
-//	printf("Choose a work month:\n\n 1. January\n 2.February\n 3.March\n 4.April\n 5.May\n 6.June\n 7.July\n 8.August\n 9.September\n 10.October\n 11.November\n 12.December\n");
-//	scanf("%d", &month);
-//
-//	printf("Pick a date to schedual your appointment on:\n");
-//	for (int i = 0; i < 20; i++)
-//	{
-//		for (int j = 0; j < 5; j++)
-//		{
-//			if (dArr[place[index]].WorkMonth[month - 1].WorkDay[i][j].minute==0)
-//			{
-//				printf("%d. %d:%d0 %s\n", i + 1, dArr[place[index]].WorkMonth[month-1].WorkDay[i][j].hour, dArr[place[index]].AppointmentsAvailable[day - 1][i].minute, dArr[place[index]].AppointmentsAvailable[day - 1][i].availability);
-//
-//			}
-//			else
-//			{
-//				printf("%d. %d:%d %s\n", i + 1, dArr[place[index]].AppointmentsAvailable[day - 1][i].hour, dArr[place[index]].AppointmentsAvailable[day - 1][i].minute, dArr[place[index]].AppointmentsAvailable[day - 1][i].availability);
-//			}
-//		}
-//	}
-//	int datepicker;
-//	scanf("%d", &datepicker);
-//	date temp = dArr[place[index]].AppointmentsAvailable[day - 1][datepicker - 1];
-//	strcpy(dArr[place[index]].AppointmentsAvailable[day - 1][datepicker - 1].availability, "Unavailable");
-//	printf("%s", dArr[place[index]].AppointmentsAvailable[day - 1][datepicker - 1].availability);
-//	int type;
-//	char Ctype;
-//	do
-//	{
-//
-//
-//		printf("Pick the type of the appointment:\n\n 1. Frontal \n 2. By phone\n");
-//		scanf("%d", &type);
-//		if (type == 1)
-//			Ctype = 'F';
-//		else if (type == 2)
-//			Ctype = 'P';
-//		else
-//		{
-//			printf("Try again\n");
-//		}
-//	} while (type != 1 && type != 2);
-//	app x = { .date = temp,.type = Ctype };
-//	return x;
-//
-//}
+app appointmentSchedualing(doc* dArr, int dArrSize)
+{
+	char* speciality = specialityInit();
+	printf("Please choose a doctor: \n");
+	int j = 0;
+	int place[20] = { 0 };
+	for (int i = 0; i < dArrSize; i++)
+	{
+		if (strcmp(dArr[i].speciality, speciality) == 0)
+		{
+
+			place[j] = i;
+			printf("%d. %s \n", j + 1, dArr[i].name);
+			j++;
+		}
+	}
+	int index;
+
+	scanf("%d", &index);
+	int month;
+	printf("Choose a work month:\n\n1. January\n 2.February\n 3.March\n 4.April\n 5.May\n 6.June\n 7.July\n 8.August\n 9.September\n 10.October\n 11.November\n 12.December\n");
+	scanf("%d", &month);
+
+	printf("Pick a day to schedual your appointment on:\n");
+	for (int i = 0; i < 20; i++)
+	{
+
+		printf("%d. %d/%d\n", i + 1, i + 1, month);
+
+	}
+	int day;
+	scanf("%d", &day);
+	for (int j = 0; j < 5; j++)
+	{
+		if (dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].minute == 0)
+		{
+			printf("%d. %d:%d0 %s\n", j + 1, dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].hour, dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].minute, dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].availability);
+
+		}
+		else
+		{
+			printf("%d. %d:%d %s\n", j + 1, dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].hour, dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].minute, dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][j].availability);
+		}
+	}
+
+	int datepicker;
+	scanf("%d", &datepicker);
+	date temp = dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][datepicker - 1];
+	strcpy(dArr[place[index]].WorkMonth[month - 1].WorkDay[day - 1][datepicker - 1].availability, "Unavailable");
+	int type;
+	char Ctype;
+	do
+	{
+		printf("Pick the type of the appointment:\n\n 1. Frontal \n 2. By phone\n");
+		scanf("%d", &type);
+		if (type == 1)
+			Ctype = 'F';
+		else if (type == 2)
+			Ctype = 'P';
+		else
+		{
+			printf("Try again\n");
+		}
+	} while (type != 1 && type != 2);
+	app x = { .date = temp,.type = Ctype,.DoctorName=dArr[place[index]].name};
+	dArr[place[index]].AppointmentsSchedualed[dArr[place[index]].numbOfAppointmentSchedualed] = x;
+	dArr[place[index]].numbOfAppointmentSchedualed++;
+	return x;
+
+}
 WorkMonth* dateInit()
 {
 	date DateInit[20][5];
 	WorkMonth* Schedual = (WorkMonth*)malloc(12 * sizeof(WorkMonth));
 	date day[5];
-	/*date** DateInit = (date**)malloc(sizeof(date*) * 20);
-	for (int i = 0; i < 5; i++)
-	{
-		DateInit[i] = (date*)malloc(sizeof(date) * 5);
-	}*/
-
+	
 	day[0].hour = 8;
 	day[0].minute = 0;
 	strcpy(day[0].availability, "Available");
@@ -467,7 +468,7 @@ WorkMonth* dateInit()
 	strcpy(day[4].availability, "Available");
 
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		for (int j = 0; j < 5; j++)
 		{
@@ -522,11 +523,63 @@ char* specialityInit()
 WorkMonth* SchedualInit()
 {
 	WorkMonth* Schedual = (WorkMonth*)malloc(12 * sizeof(WorkMonth));
-	Schedual=dateInit();
+	Schedual = dateInit();
 
-	
-	
+
+
 	return Schedual;
+}
+
+void docAppCancel(app appointment, doc* dArr,int dArrSize)
+{
+	
+	for (int i = 0; i < dArrSize; i++)
+	{
+		if(strcmp(dArr[i].name,appointment.DoctorName)==0)
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				if (dArr[i].WorkMonth[appointment.date.month - 1].WorkDay[appointment.date.day - 1][j].hour==appointment.date.hour&& dArr[i].WorkMonth[appointment.date.month - 1].WorkDay[appointment.date.day - 1][j].minute == appointment.date.minute)
+				{
+					strcpy(dArr[i].WorkMonth[appointment.date.month - 1].WorkDay[appointment.date.day - 1][j].availability, "Available");
+				}
+			}
+			app* temp = (app*)malloc(sizeof(app) * (dArr[i].numbOfAppointmentSchedualed));
+			for (int j = 0; j < dArr[i].numbOfAppointmentSchedualed-1; j++)
+			{
+				if(dArr[i].AppointmentsSchedualed[j].date.day != appointment.date.day && dArr[i].AppointmentsSchedualed[j].date.month != appointment.date.month && dArr[i].AppointmentsSchedualed[j].date.hour != appointment.date.hour && dArr[i].AppointmentsSchedualed[j].date.minute != appointment.date.minute)
+				{
+					dArr[i].AppointmentsSchedualed[j] = dArr[i].AppointmentsSchedualed[j + 1];
+				}
+			}
+			if(dArr[i].numbOfAppointmentSchedualed>0)
+				dArr[i].numbOfAppointmentSchedualed--;
+			for (int j = 0; j < dArr[i].numbOfAppointmentSchedualed; j++)
+			{
+				dArr[i].AppointmentsSchedualed[j] = temp[j];
+			}
+			break;
+		}
+	}
+}
+app* appointmentCancelation(app* appointments, int* numOfAppointments,doc* dArr,int dArrSize)
+{
+	printf("Pick an appointment to cancel: \n");
+	for (int i = 0; i < (*numOfAppointments); i++)
+	{
+		printf("%d. %d/%d %d:%d %c\n",i+1, appointments[i].date.month, appointments[i].date.day, appointments[i].date.hour, appointments[i].date.minute, appointments[i].type);
+	}
+	int index;
+	scanf("%d", &index);
+	app tempA = appointments[index];
+	(*numOfAppointments)--;
+	app* temp = (app*)malloc(sizeof(app) * (*numOfAppointments));
+	for (int i = index-1; i < (*numOfAppointments)-1; i++)
+	{
+			appointments[i] = appointments[i + 1];
+	}
+	docAppCancel(tempA, dArr, dArrSize);
+	return temp;
 }
 
 int main()
@@ -536,44 +589,56 @@ int main()
 	int dArrSize = 0;
 	pat pArr[10];
 	int pArrSize = 0;
-	signInDoctor(dArr,&dArrSize);
-	printf("%d/%d %d:%d0", dArr[0].WorkMonth[0].WorkDay[0][0].month, dArr[0].WorkMonth[0].WorkDay[0][0].day,dArr[0].WorkMonth[0].WorkDay[0][0].hour, dArr[0].WorkMonth[0].WorkDay[0][0].minute);
+	//signInDoctor(dArr, &dArrSize);
 
-	/*int dArrSize = 0;
-	doc Vlad = { .name = "Vlad",.AppointmentsAvailable = dateInit(),.speciality = "Family doctor" };
+
+	doc Vlad = { .name = "Vlad",.WorkMonth = SchedualInit(),.speciality = "Family doctor", .numbOfAppointmentSchedualed = 0, .numOfRaters = 0 };
 	dArr[0] = Vlad;
 	dArrSize++;
-	app x = appointmentSchedualing(dArr, dArrSize);
-	printf("%d:%d0 %c", x.date.hour,x.date.minute, x.type);*/
+	pat Bar = { .name = "Bar", .numOfAppointments = 0, };
+	for (int i = 0; i < 2; i++) {
+		app x = appointmentSchedualing(dArr, dArrSize);
+		Bar.appointments[Bar.numOfAppointments] = x;
+		printf("%d:%d0 %c", Bar.appointments[Bar.numOfAppointments].date.hour, Bar.appointments[Bar.numOfAppointments].date.minute, Bar.appointments[Bar.numOfAppointments].type);
+		Bar.numOfAppointments++;
+	}
+	app* temp;
+	temp=appointmentCancelation(Bar.appointments, &Bar.numOfAppointments, dArr, dArrSize);
+	for (int i = 0; i < Bar.numOfAppointments; i++)
+	{
+		Bar.appointments[i] = temp[i];
+	}
+	printf("%d:%d0 %d\n", Bar.appointments[Bar.numOfAppointments].date.hour, Bar.appointments[Bar.numOfAppointments].date.minute, Bar.appointments[Bar.numOfAppointments].type);
 
-	
+
 	/*time_t curtime;
-
 	time(&curtime);
-
 	printf("Current time = %s", ctime(&curtime));*/
 
-}
+
 
 /*doc a={.name="Vlad",}
 appointmentSchedualing(dArr, dArrSize);*/
 
 
-//printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
-//int option;
-//scanf("%d", &option);
-//switch (option)
-//{
-//case 1:
-//	printf("Pick an option: \n 1-Sign in. \n 2-Log in.\n");
-//	scanf("%d", &option);
-//	switch (option)
-//	{
-//	case 1:
-//		signInDoctor(dArr,dArrSize);
-//	default:
-//		break;
-//	}
-//default:
-//	break;
-//}
+////printf("Pick an option: \n 1-I'm a Doctor. \n 2-I'm a patient\n");
+////int option;
+////scanf("%d", &option);
+////switch (option)
+////{
+////case 1:
+////	printf("Pick an option: \n 1-Sign in. \n 2-Log in.\n");
+////	scanf("%d", &option);
+////	switch (option)
+////	{
+////	case 1:
+////		signInDoctor(dArr,dArrSize);
+////	case 2:
+////		
+////	default:
+////		break;
+////	}
+////default:
+////	break;
+////}
+}
