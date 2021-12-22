@@ -801,7 +801,8 @@ void RatingCalc(int rate, doc* doctor)
 int main()
 {
 	int DocPat;
-	int LogReg;
+	int LogRegDoc;
+	int LogRegPat;
 	long ID;
 	doc dArr[10];
 	int dArrSize = 0;
@@ -813,6 +814,7 @@ int main()
 	app Appointment;
 	app* temp;
 	
+	
 	do {
 		printf("Are you a doctor or a patient?\n 1. Doctor\n 2. Patient\n 3. Exit\n");
 		scanf("%d", &DocPat);
@@ -822,9 +824,9 @@ int main()
 			do
 			{
 				printf(" 1. Log in\n 2. Register\n 3. Exit\n");
-				scanf("%d", &LogReg);
+				scanf("%d", &LogRegDoc);
 
-				switch (LogReg)
+				switch (LogRegDoc)
 				{
 				case 1:
 					printf("Enter ID:\n");
@@ -867,14 +869,14 @@ int main()
 				default:
 					break;
 				}
-			} while (LogReg!=3);
+			} while (LogRegDoc!=3);
 			break;
 
 		case 2:
 			do {
 				printf(" 1. Log in\n 2. Register\n 3. Exit\n");
-				scanf("%d", &LogReg);
-				switch (LogReg)
+				scanf("%d", &LogRegPat);
+				switch (LogRegPat)
 				{
 				case 1:
 					printf("Enter ID:\n");
@@ -921,7 +923,6 @@ int main()
 								printf("Wrong number try again.");
 								break;
 							}
-							break;
 						} while (PatMenu != 6);
 					}break;
 				case 2:
@@ -933,13 +934,13 @@ int main()
 					printf("Wrong number entred try again.\n");
 					break;
 				}
-			} while (LogReg != 3);
+			} while (LogRegPat != 3);
+		case 3:
 			break;
 		default:
 			printf("Wrong number entred try again.\n");
 			break;
 		}
-		break;
 	}while (DocPat != 3);
 	return 0;
 }
